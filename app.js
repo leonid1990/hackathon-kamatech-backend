@@ -19,6 +19,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+/* DataBase */
+const DATABASE_URL = process.env.DATABASE_URL || "mongodb://localhost/test";
+
+const mongoose = require('mongoose');
+mongoose.set('useFindAndModify', false);
+mongoose.connect(DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true });
+const db = mongoose.connection;
+db.on('error', error => console.log(error));
+db.once('open', () => {console.log('Mongoose is connected');});
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
