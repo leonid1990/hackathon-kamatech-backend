@@ -1,15 +1,18 @@
 var express = require('express');
 var router = express.Router();
+const Location = require('../models/Location');
 
 /* GET*/
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.post('/', async function(req, res, next) {
+    const userId = req.body.user;
+    const location = await Location.findOne({_id: req.body.locationId});
+    const visit = {
+        userId: userId,
+        inDate: new Date()
+    }
+    location.visits.push(visit);
+    location.save();
+    res.send({userId, location});
 });
-
-/* GET*/
-router.get('/:roomid', function(req, res, next) {
-    const roomid = req.params.roomid;
-    res.render('index', { title: 'roomid' });
-  });
 
 module.exports = router;
