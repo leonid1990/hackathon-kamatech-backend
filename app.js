@@ -9,6 +9,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var authRouter = require('./routes/auth');
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/users');
 var locationsRouter = require('./routes/locations');
@@ -41,6 +42,7 @@ db.once('open', () => {console.log('Mongoose is connected');});
 app.use('/', indexRouter);
 app.use('/users', userRouter);
 app.use('/locations', locationsRouter);
+app.use('/auth', authRouter);
 app.use('/scan', scanRouter);
 
 
