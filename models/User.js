@@ -6,25 +6,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    email: {
-        type: String,
-        require: true
-    },
     id: {
         type: Number,
         require: true
     },
-    password: {
-        type: String,
-        require: true
-    },
-    role: {
-        type: String,
-        default: 'user'
-    },
-    Date: {
-        type: Date,
-        default: Date.now
+    verified: {
+        type: Boolean,
+        require: true,
+        default: false
     }
 });
 
