@@ -19,20 +19,38 @@ router.post('/add', async function(req, res, next) {
 });
 
 router.post('/report-verify', async function(req, res, next) {
-  const location = await User.findOne({_id: req.body.userId});
+  const user = await User.findOne({_id: req.body.userId});
   const verifyDate = new Date(req.body.date);
+
   console.log("date:" + verifyDate.toLocaleString());
-  let redUsers = new Set();
-  location.visits.forEach(visit => {
-    console.log("visit in:" + visit.inDate.toLocaleString());
-    console.log("visit out:" + visit.outDate.toLocaleString());
-    let inDate = new Date(visit.inDate);
-    let outDate = new Date(visit.outDate);
-    if(inDate.getTime() <= verifyDate.getTime() && outDate.getTime() >= verifyDate.getTime()) {
-      redUsers.add(visit.userId);
-    }
+  let sickDays = 14;
+  let startedCorona = new Date(verifyDate.getDate() - sickDays);
+  let redEvents = [];
+  const locations = await Location.find();
+  locations.forEach(location => {
+    location.visits.forEach(visit => {
+        let inDate = new Date(visit.inDate);
+        let outDate = new Date(visit.outDate);
+        if(inDate.getTime() <= startedCorona.getTime() && outDate.getTime() >= verifyDate.getTime() && visit.userId === user._id) {
+          redEvents.push({location, inDate, outDate});
+        }
+    });
   });
-  res.send(Array.from(redUsers));
+  
+
+  let redUsers = new Set();
+  redEvents.forEach(event => {
+    event.location.visits.forEach(visit => {
+        let inDate = new Date(visit.inDate);
+        let outDate = new Date(visit.outDate);
+        if(inDate.getTime() <= event.inDate.getTime() && outDate.getTime() >= event.outDate.getTime() && !visit.userId === user._id) {
+          redUsers.add(user._id);
+        }
+    });
+  });
+
+
+  res.send(redEvents);
 });
 
 module.exports = router;
