@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Location = require('../models/Location');
+const User = require('../models/User');
 
 router.get('/all', async function(req, res, next) {
   const locaitons = await Location.find();
@@ -20,15 +21,15 @@ router.post('/report-verify', async function(req, res, next) {
   const verifyDate = new Date(req.body.date);
   console.log("date:" + verifyDate.toLocaleString());
   let redUsers = new Set();
-  location.visits.forEach(visit => {
+  for (const visit of location.visits) {
     console.log("visit in:" + visit.inDate.toLocaleString());
     console.log("visit out:" + visit.outDate.toLocaleString());
     let inDate = new Date(visit.inDate);
     let outDate = new Date(visit.outDate);
     if(inDate.getTime() <= verifyDate.getTime() && outDate.getTime() >= verifyDate.getTime()) {
-      redUsers.add(visit.userId);
+      redUsers.add(await User.findOne({_id: visit.userId}));
     }
-  });
+  };
   res.send(Array.from(redUsers));
 });
 

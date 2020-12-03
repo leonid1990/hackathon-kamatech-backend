@@ -39,17 +39,17 @@ router.post('/report-verify', async function(req, res, next) {
   
 
   let redUsers = new Set();
-  redEvents.forEach(event => {
-    event.location.visits.forEach(visit => {
+  for (const event of redEvents) {
+    for (const visit of event.location.visits) {
 
         let inDate = new Date(visit.inDate);
         let outDate = new Date(visit.outDate);
 
         if(inDate.getTime() <= event.inDate.getTime() && outDate.getTime() >= event.outDate.getTime()) {
-          redUsers.add(user._id);
+          redUsers.add(await User.findOne({_id: user._id}));
         }
-    });
-  });
+    };
+  };
 
 
   res.send(Array.from(redUsers));
