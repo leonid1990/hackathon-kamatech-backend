@@ -7,9 +7,11 @@ const User = require('../models/User');
 /* GET*/
 router.post('/', async function(req, res, next) {
     const userId = req.body.userId;
+    const date = req.body.date;
+    console.log(req.body.locationId);
     const user = await User.findOne({_id: userId});
     if(user.currentVisit != null) {
-        user.currentVisit.outDate = new Date();
+        user.currentVisit.outDate = date
         const location = await Location.findOne({_id: req.body.locationId});
         location.visits.push(user.currentVisit);
         location.save();
@@ -19,7 +21,7 @@ router.post('/', async function(req, res, next) {
     } else {
         user.currentVisit = {
             userId: userId,
-            inDate: new Date()
+            inDate: date
         }
         user.save();
     }
