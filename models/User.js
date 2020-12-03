@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const path = require('path');
+const visitSchema = require('./Visit');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -9,6 +10,10 @@ const userSchema = new mongoose.Schema({
     id: {
         type: Number,
         require: true
+    },
+    currentVisit: {
+        type: visitSchema,
+        default: null
     },
     verified: {
         type: Boolean,
